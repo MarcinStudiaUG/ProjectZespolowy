@@ -88,12 +88,11 @@ const Navbar: React.FC = () => {
                 <li key={community.id} className="mb-4">
                   <a
                     href={`/community/${community.id}`}
-                    className="block p-4 rounded-md shadow-md transition-colors duration-150 hover:bg-[#7A2525]"
-                    style={{ backgroundColor: "#7A2525" }}
+                    className="block bg-[#7A2525] p-4 rounded-md shadow-md transition-colors duration-150 hover:bg-[#5A1A1A]"
                     onClick={() => setMenuOpen(false)}
-                  >
+                    >
                     {community.name}
-                  </a>
+                    </a>
                 </li>
               ))}
             </ul>
