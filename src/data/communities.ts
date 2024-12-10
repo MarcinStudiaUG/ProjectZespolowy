@@ -1,10 +1,10 @@
-import { Community } from "../types";
+import { Community } from "../types/index";
 
 export const communities: Community[] = [
   {
     id: "09fc7464-1c5d-48c0-8dd9-b8c34b2813c2",
     name: "mySuperCommunity",
-    description: "nothing",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
     logoUrl: null,
     isDeleted: false,
     createdAt: "2025-01-15T21:37:10.192Z",

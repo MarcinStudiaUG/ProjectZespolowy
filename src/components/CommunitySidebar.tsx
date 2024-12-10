@@ -1,26 +1,31 @@
 import React from "react";
+import { communities } from "../data/communities";
 
-const communities = [
-  { id: "1", name: "Tech Community" },
-  { id: "2", name: "Book Club" },
-];
+interface CommunitySidebarProps {
+  currentCommunityId?: string;
+}
 
-const CommunitySidebar: React.FC = () => {
+const CommunitySidebar: React.FC<CommunitySidebarProps> = ({ currentCommunityId }) => {
+  const filteredCommunities = currentCommunityId
+    ? communities.filter((c) => c.id !== currentCommunityId)
+    : communities;
+
   return (
     <div className="hidden sm:block w-64 bg-gray-200 p-4">
       <h2 className="text-xl font-bold mb-4">Communities</h2>
-      <ul>
-        {communities.map((community) => (
-          <li key={community.id} className="mb-2">
-            <a
-              href={`/community/${community.id}`}
-              className="text-blue-500 hover:underline"
-            >
-              {community.name}
-            </a>
-          </li>
+      <div className="flex flex-col divide-y-[5px] divide-[#580C1F]">
+        {filteredCommunities.map((community) => (
+          <button
+            key={community.id}
+            onClick={() => {
+              window.location.href = `/community/${community.id}`;
+            }}
+            className="w-full text-left  hover:bg-gray-300 p-4 transition-colors duration-150 focus:outline-none"
+          >
+            {community.name}
+          </button>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

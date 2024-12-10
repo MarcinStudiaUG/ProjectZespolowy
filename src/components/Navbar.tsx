@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import AvatarMenu from "./AvatarMenu";
-
-const communities = [
-  { id: "1", name: "Tech Community" },
-  { id: "2", name: "Book Club" },
-];
+import { communities } from "../data/communities";
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -90,9 +86,9 @@ const Navbar: React.FC = () => {
                     href={`/community/${community.id}`}
                     className="block bg-[#7A2525] p-4 rounded-md shadow-md transition-colors duration-150 hover:bg-[#5A1A1A]"
                     onClick={() => setMenuOpen(false)}
-                    >
+                  >
                     {community.name}
-                    </a>
+                  </a>
                 </li>
               ))}
             </ul>

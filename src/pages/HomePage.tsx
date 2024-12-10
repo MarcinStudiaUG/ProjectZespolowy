@@ -1,13 +1,14 @@
 import React from "react";
+import Navbar from "../components/Navbar";
 import CommunitySidebar from "../components/CommunitySidebar";
 import PostCard from "../components/PostCard";
-import Navbar from "../components/Navbar";
+import { communities } from "../data/communities";
 
 const HomePage: React.FC = () => {
-  const posts = [
-    { id: "1", content: "Welcome to the community!", timestamp: "2025-01-01T10:00:00Z" },
-    { id: "2", content: "Don't miss our upcoming event!", timestamp: "2025-01-01T09:00:00Z" },
-  ];
+  const allPosts = communities.flatMap((community) => community.posts);
+  allPosts.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
   return (
     <div className="h-screen flex flex-col">
@@ -16,7 +17,7 @@ const HomePage: React.FC = () => {
         <CommunitySidebar />
         <div className="flex-1 flex flex-col">
           <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
-            {posts.map((post) => (
+            {allPosts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}
           </div>
