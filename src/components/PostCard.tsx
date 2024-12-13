@@ -1,18 +1,110 @@
-import React from "react";
+import React, { useState } from "react";
 import { Post } from "../types/index";
+import { users } from "../data/mockData";
+import CommentForm from "./CommentForm";
 
 interface PostCardProps {
   post: Post;
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState(post.comments || []);
+
+  const author = users.find((user) => user.id === post.authorId);
+  const formattedDate = new Date(post.createdAt).toLocaleString();
+
+  const handleAddComment = (content: string) => {
+    const newComment = {
+      id: new Date().toISOString(),
+      authorId: "currentUserId",
+      postId: post.id,
+      content,
+      isDeleted: false,
+      createdAt: new Date().toISOString(),
+    };
+    setComments([...comments, newComment]);
+  };
+
   return (
     <div className="p-4 mb-4 bg-white rounded shadow-md">
-      <h3 className="font-bold">{post.title}</h3>
-      <p>{typeof post.content === 'object' ? JSON.stringify(post.content) : post.content}</p>
-      <p className="text-gray-500 text-sm">
-        {new Date(post.createdAt).toLocaleString()}
+      <div className="flex justify-between items-center mb-2">
+        <div className="flex items-center">
+          {author && author.avatarUrl ? (
+            <img
+              src={author.avatarUrl}
+              alt={author.name}
+              className="w-8 h-8 rounded-full mr-2"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center mr-2">
+              {author ? author.name.charAt(0) : "?"}
+            </div>
+          )}
+          <span className="font-bold">
+            {author ? author.name : "Unknown"}
+          </span>
+        </div>
+        <span className="text-sm text-gray-500">{formattedDate}</span>
+      </div>
+
+      <h2 className="text-xl font-semibold mb-1">{post.title}</h2>
+      <p className="mb-2">
+        {typeof post.content === "object"
+          ? JSON.stringify(post.content)
+          : post.content}
       </p>
+
+      {comments.length > 0 && (
+        <button
+          onClick={() => setShowComments(!showComments)}
+          className="text-blue-500 hover:underline mb-2"
+        >
+          {showComments
+            ? "Hide Comments"
+            : `See Comments (${comments.length})`}
+        </button>
+      )}
+
+      {showComments && (
+        <div className="mt-2 border-t pt-2">
+          {comments.map((comment) => {
+            const commentAuthor = users.find(
+              (user) => user.id === comment.authorId
+            );
+            return (
+              <div
+                key={comment.id}
+                className="flex justify-between items-start mb-2"
+              >
+                <div className="flex items-center">
+                  {commentAuthor && commentAuthor.avatarUrl ? (
+                    <img
+                      src={commentAuthor.avatarUrl}
+                      alt={commentAuthor.name}
+                      className="w-6 h-6 rounded-full mr-2"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center mr-2">
+                      {commentAuthor ? commentAuthor.name.charAt(0) : "?"}
+                    </div>
+                  )}
+                  <div>
+                    <span className="font-bold">
+                      {commentAuthor ? commentAuthor.name : "Unknown"}:{" "}
+                    </span>
+                    <span>{comment.content}</span>
+                  </div>
+                </div>
+                <span className="text-xs text-gray-500 ml-2">
+                  {new Date(comment.createdAt).toLocaleString()}
+                </span>
+              </div>
+            );
+          })}
+          <CommentForm onSubmit={handleAddComment} />
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AvatarMenu from "./AvatarMenu";
-import { communities } from "../data/communities";
+import { communities } from "../data/mockData";
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -77,7 +77,9 @@ const Navbar: React.FC = () => {
               &times;
             </button>
 
-            <h2 className="text-2xl text-center font-bold mb-6">Communities</h2>
+            <h2 className="text-2xl text-center font-bold mb-6">
+              Communities
+            </h2>
 
             <ul>
               {communities.map((community) => (

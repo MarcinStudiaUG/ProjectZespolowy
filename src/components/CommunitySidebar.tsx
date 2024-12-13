@@ -1,5 +1,5 @@
 import React from "react";
-import { communities } from "../data/communities";
+import { communities } from "../data/mockData";
 
 interface CommunitySidebarProps {
   currentCommunityId?: string;
@@ -20,7 +20,7 @@ const CommunitySidebar: React.FC<CommunitySidebarProps> = ({ currentCommunityId 
             onClick={() => {
               window.location.href = `/community/${community.id}`;
             }}
-            className="w-full text-left  hover:bg-gray-300 p-4 transition-colors duration-150 focus:outline-none"
+            className="w-full text-left hover:bg-gray-300 p-4 transition-colors duration-150 focus:outline-none"
           >
             {community.name}
           </button>

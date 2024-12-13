@@ -24,7 +24,7 @@ const CommunityUsersModal: React.FC<CommunityUsersModalProps> = ({
           {users.map((user) => (
             <li key={user.id} className="flex items-center mb-3">
               <img
-                src={user.avatarUrl}
+                src={user.avatarUrl || "/default-avatar.png"}
                 alt={user.name}
                 className="w-10 h-10 rounded-full mr-3"
               />

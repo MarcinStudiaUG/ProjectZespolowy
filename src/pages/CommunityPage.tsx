@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { communities } from "../data/communities";
-import { users } from "../data/users";
+import { communities, users } from "../data/mockData";
 import PostCard from "../components/PostCard";
 import CommunitySidebar from "../components/CommunitySidebar";
 import Navbar from "../components/Navbar";
@@ -28,7 +27,7 @@ const CommunityPage: React.FC = () => {
   }
 
   const communityUsers = users.filter((user) =>
-    user.communityIds.includes(community.id)
+    user.communityIds.some((id) => id === community.id)
   );
 
   const handleCreatePost = (title: string, content: string) => {
@@ -53,18 +52,23 @@ const CommunityPage: React.FC = () => {
         <div className="flex-1 flex flex-col">
           <div className="p-4 bg-gray-800 text-white flex flex-row items-center">
             <div className="w-[30%] flex flex-col items-center">
-                {community.logoUrl ? (
+              {community.logoUrl ? (
                 <img
-                src={community.logoUrl}
-                alt={community.name}
-                className="h-16 w-auto mb-2 rounded-full"
+                  src={community.logoUrl}
+                  alt={community.name}
+                  className="h-16 w-auto mb-2 rounded-full"
                 />
-                ) : (
+              ) : (
                 <div className="h-16 w-16 mb-2 bg-gray-600 rounded-full flex items-center justify-center text-xl font-bold">
                   {community.name.charAt(0)}
                 </div>
               )}
-              <h1 className="text-2xl font-bold">{community.name}</h1>
+              <h1
+                className="text-2xl font-bold truncate"
+                title={community.name}
+              >
+                {community.name}
+              </h1>
             </div>
             <div className="w-[70%] text-left">
               <p className="text-gray-300">{community.description}</p>
@@ -75,23 +79,23 @@ const CommunityPage: React.FC = () => {
             <div className="grid grid-cols-3 items-center">
               <div className="flex justify-center">
                 <button
-                onClick={() => setShowCreatePostForm(!showCreatePostForm)}
-                className="px-4 py-2 bg-[#74121D] hover:bg-[#580C1F] text-white rounded"
+                  onClick={() => setShowCreatePostForm(!showCreatePostForm)}
+                  className="px-4 py-2 bg-[#74121D] hover:bg-[#580C1F] text-white rounded"
                 >
                   Create Post
                 </button>
               </div>
               <div className="flex justify-end">
                 <button
-                onClick={() => setShowUsersModal(true)}
-                className="px-4 py-2 bg-[#74121D] hover:bg-[#580C1F] text-white rounded"
+                  onClick={() => setShowUsersModal(true)}
+                  className="px-4 py-2 bg-[#74121D] hover:bg-[#580C1F] text-white rounded"
                 >
                   See Users: {communityUsers.length}
                 </button>
               </div>
-            <div className="flex justify-end"></div>
+              <div className="flex justify-end"></div>
+            </div>
           </div>
-        </div>
 
           {showCreatePostForm && (
             <div className="w-[70%] mx-auto my-4">

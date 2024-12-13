@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import CommunitySidebar from "../components/CommunitySidebar";
 import PostCard from "../components/PostCard";
-import { communities } from "../data/communities";
+import { communities } from "../data/mockData";
 
 const HomePage: React.FC = () => {
   const allPosts = communities.flatMap((community) => community.posts);
