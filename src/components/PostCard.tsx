@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Post } from "../types/index";
+import { Post, ReactionKey } from "../types/index";
 import { users } from "../data/mockData";
 import CommentForm from "./CommentForm";
+import ReactionBar from "./ReactionBar";
 
 interface PostCardProps {
   post: Post;
@@ -10,6 +11,7 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState(post.comments || []);
+  const [reactions, setReactions] = useState(post.reactions);
 
   const author = users.find((user) => user.id === post.authorId);
   const formattedDate = new Date(post.createdAt).toLocaleString();
@@ -24,6 +26,24 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       createdAt: new Date().toISOString(),
     };
     setComments([...comments, newComment]);
+  };
+
+  const handleReaction = (reactionType: ReactionKey) => {
+    if (reactions.myReaction === reactionType) {
+      setReactions({
+        ...reactions,
+        [reactionType]: reactions[reactionType] - 1,
+        myReaction: null,
+      });
+    } else {
+      const updatedReactions = { ...reactions };
+      if (reactions.myReaction) {
+        updatedReactions[reactions.myReaction] = updatedReactions[reactions.myReaction] - 1;
+      }
+      updatedReactions[reactionType] = updatedReactions[reactionType] + 1;
+      updatedReactions.myReaction = reactionType;
+      setReactions(updatedReactions);
+    }
   };
 
   return (
@@ -50,21 +70,23 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
       <h2 className="text-xl font-semibold mb-1">{post.title}</h2>
       <p className="mb-2">
-        {typeof post.content === "object"
-          ? JSON.stringify(post.content)
-          : post.content}
+        {typeof post.content === "object" && post.content !== null
+        ? (post.content as { info?: string }).info || "No content"
+        : post.content}
       </p>
 
-      {comments.length > 0 && (
-        <button
-          onClick={() => setShowComments(!showComments)}
-          className="text-blue-500 hover:underline mb-2"
-        >
-          {showComments
-            ? "Hide Comments"
-            : `See Comments (${comments.length})`}
-        </button>
-      )}
+      <ReactionBar reactions={reactions} onReact={handleReaction} />
+
+      <button
+        onClick={() => setShowComments(!showComments)}
+        className="text-blue-500 hover:underline mt-2 mb-2 block"
+      >
+        {showComments
+          ? "Hide Comments"
+          : comments.length > 0
+          ? `See Comments (${comments.length})`
+          : "Add a Comment"}
+      </button>
 
       {showComments && (
         <div className="mt-2 border-t pt-2">

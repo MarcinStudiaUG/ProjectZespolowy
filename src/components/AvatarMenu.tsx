@@ -15,7 +15,7 @@ const AvatarMenu: React.FC = () => {
         <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg">
           <ul>
             <li className="p-2 hover:bg-gray-200 cursor-pointer text-black">
-              Settings
+              Settingsya
             </li>
             <li className="p-2 hover:bg-gray-200 cursor-pointer text-black">
               Logout

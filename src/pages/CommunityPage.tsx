@@ -39,6 +39,7 @@ const CommunityPage: React.FC = () => {
       isDeleted: false,
       createdAt: new Date().toISOString(),
       communityId: community.id,
+      reactions: { LIKE: 0, HEART: 0, SAD: 0, SMILE: 0, myReaction: null }
     };
     setCommunityPosts([newPost, ...communityPosts]);
     setShowCreatePostForm(false);
