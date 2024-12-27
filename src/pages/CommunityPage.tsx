@@ -47,9 +47,15 @@ const CommunityPage: React.FC = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <Navbar />
-      <div className="flex flex-1">
-        <CommunitySidebar currentCommunityId={community.id} />
+      <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+        <Navbar />
+      </div>
+
+      <div className="flex flex-1 pt-16">
+        <div className="hidden sm:block w-64 bg-gray-200 sticky top-16 h-screen">
+          <CommunitySidebar currentCommunityId={community.id} />
+        </div>
+
         <div className="flex-1 flex flex-col">
           <div className="p-4 bg-gray-800 text-white flex flex-row items-center">
             <div className="w-[30%] flex flex-col items-center">
@@ -94,7 +100,6 @@ const CommunityPage: React.FC = () => {
                   See Users: {communityUsers.length}
                 </button>
               </div>
-              <div className="flex justify-end"></div>
             </div>
           </div>
 

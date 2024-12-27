@@ -6,7 +6,7 @@ const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="relative bg-brand-cardinal-500">
+    <nav className="relative bg-brand-cardinal-500 fixed">
       <div className="flex items-center justify-between p-2 px-5 text-white">
         <div className="flex items-center">
           <button

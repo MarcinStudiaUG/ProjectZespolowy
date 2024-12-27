@@ -12,15 +12,19 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <Navbar />
-      <div className="flex flex-1">
-        <CommunitySidebar />
-        <div className="flex-1 flex flex-col">
-          <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
-            {allPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
+      <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+        <Navbar />
+      </div>
+
+      <div className="flex flex-1 pt-16">
+        <div className="hidden sm:block w-64 bg-gray-200 sticky top-16 h-screen">
+          <CommunitySidebar />
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
+          {allPosts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
         </div>
       </div>
     </div>
