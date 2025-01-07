@@ -48,6 +48,7 @@ export interface User {
   name: string;
   avatarUrl: string | null;
   communityIds: string[];
+  cars?: string[];
 }
 
 export interface GraphQLResponse {

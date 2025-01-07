@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Post, ReactionKey } from "../types/index";
+import { Post, ReactionKey, User } from "../types/index";
 import { users } from "../data/mockData";
 import CommentForm from "./CommentForm";
 import ReactionBar from "./ReactionBar";
+import UserProfileModal from "./UserProfileModal";
 
 interface PostCardProps {
   post: Post;
@@ -12,6 +13,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState(post.comments || []);
   const [reactions, setReactions] = useState(post.reactions);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const author = users.find((user) => user.id === post.authorId);
   const formattedDate = new Date(post.createdAt).toLocaleString();
@@ -38,9 +40,9 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     } else {
       const updatedReactions = { ...reactions };
       if (reactions.myReaction) {
-        updatedReactions[reactions.myReaction] = updatedReactions[reactions.myReaction] - 1;
+        updatedReactions[reactions.myReaction] -= 1;
       }
-      updatedReactions[reactionType] = updatedReactions[reactionType] + 1;
+      updatedReactions[reactionType] += 1;
       updatedReactions.myReaction = reactionType;
       setReactions(updatedReactions);
     }
@@ -54,10 +56,14 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
             <img
               src={author.avatarUrl}
               alt={author.name}
-              className="w-8 h-8 rounded-full mr-2"
+              className="w-8 h-8 rounded-full mr-2 cursor-pointer"
+              onClick={() => setSelectedUser(author)}
             />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center mr-2">
+            <div
+              className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center mr-2 cursor-pointer"
+              onClick={() => author && setSelectedUser(author)}
+            >
               {author ? author.name.charAt(0) : "?"}
             </div>
           )}
@@ -70,9 +76,9 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
       <h2 className="text-xl font-semibold mb-1">{post.title}</h2>
       <p className="mb-2">
-        {typeof post.content === "object" && post.content !== null
-        ? (post.content as { info?: string }).info || "No content"
-        : post.content}
+        {typeof post.content === "object"
+          ? JSON.stringify(post.content)
+          : post.content}
       </p>
 
       <ReactionBar reactions={reactions} onReact={handleReaction} />
@@ -92,7 +98,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <div className="mt-2 border-t pt-2">
           {comments.map((comment) => {
             const commentAuthor = users.find(
-              (user) => user.id === comment.authorId
+              (u) => u.id === comment.authorId
             );
             return (
               <div
@@ -104,10 +110,14 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                     <img
                       src={commentAuthor.avatarUrl}
                       alt={commentAuthor.name}
-                      className="w-6 h-6 rounded-full mr-2"
+                      className="w-6 h-6 rounded-full mr-2 cursor-pointer"
+                      onClick={() => setSelectedUser(commentAuthor)}
                     />
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center mr-2">
+                    <div
+                      className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center mr-2 cursor-pointer"
+                      onClick={() => commentAuthor && setSelectedUser(commentAuthor)}
+                    >
                       {commentAuthor ? commentAuthor.name.charAt(0) : "?"}
                     </div>
                   )}
@@ -126,6 +136,12 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           })}
           <CommentForm onSubmit={handleAddComment} />
         </div>
+      )}
+      {selectedUser && (
+        <UserProfileModal
+          user={selectedUser}
+          onClose={() => setSelectedUser(null)}
+        />
       )}
     </div>
   );
