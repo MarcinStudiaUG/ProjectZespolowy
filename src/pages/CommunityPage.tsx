@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { useParams } from "react-router-dom";
 import { communities, users } from "../data/mockData";
 import PostCard from "../components/PostCard";
@@ -13,6 +14,7 @@ interface RouteParams extends Record<string, string | undefined> {
 }
 
 const CommunityPage: React.FC = () => {
+  const { isAuthenticated } = useAuth0();
   const { communityId } = useParams<RouteParams>();
   const community = communities.find((c) => c.id === communityId);
 
@@ -21,6 +23,19 @@ const CommunityPage: React.FC = () => {
   const [communityPosts, setCommunityPosts] = useState<Post[]>(
     community?.posts || []
   );
+
+  if (!isAuthenticated) {
+    return (
+      <div className="h-screen flex flex-col">
+        <Navbar />
+        <div className="flex flex-1 items-center justify-center bg-gray-100">
+          <h2 className="text-xl font-semibold">
+            Please log in or register to view this community.
+          </h2>
+        </div>
+      </div>
+    );
+  }
 
   if (!community) {
     return <div>Community not found</div>;
@@ -39,7 +54,7 @@ const CommunityPage: React.FC = () => {
       isDeleted: false,
       createdAt: new Date().toISOString(),
       communityId: community.id,
-      reactions: { LIKE: 0, HEART: 0, SAD: 0, SMILE: 0, myReaction: null }
+      reactions: { LIKE: 0, HEART: 0, SAD: 0, SMILE: 0, myReaction: null },
     };
     setCommunityPosts([newPost, ...communityPosts]);
     setShowCreatePostForm(false);
@@ -47,17 +62,12 @@ const CommunityPage: React.FC = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
-        <Navbar />
-      </div>
-
-      <div className="flex flex-1 pt-16">
-        <div className="hidden sm:block w-64 bg-gray-200 sticky top-16 h-screen">
-          <CommunitySidebar currentCommunityId={community.id} />
-        </div>
-
+      <Navbar />
+      <div className="flex flex-1">
+        <CommunitySidebar currentCommunityId={community.id} />
         <div className="flex-1 flex flex-col">
           <div className="p-4 bg-gray-800 text-white flex flex-row items-center">
+            {/* Community Info */}
             <div className="w-[30%] flex flex-col items-center">
               {community.logoUrl ? (
                 <img
