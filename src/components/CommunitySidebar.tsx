@@ -1,11 +1,15 @@
 import React from "react";
-import { communities } from "../data/mockData";
+import { Community } from "../types";
 
 interface CommunitySidebarProps {
+  communities: Community[];
   currentCommunityId?: string;
 }
 
-const CommunitySidebar: React.FC<CommunitySidebarProps> = ({ currentCommunityId }) => {
+const CommunitySidebar: React.FC<CommunitySidebarProps> = ({
+  communities,
+  currentCommunityId,
+}) => {
   const filteredCommunities = currentCommunityId
     ? communities.filter((c) => c.id !== currentCommunityId)
     : communities;

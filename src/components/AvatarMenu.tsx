@@ -15,16 +15,6 @@ const AvatarMenu: React.FC = () => {
         >
           Login
         </button>
-        <button
-          className="px-4 py-2 bg-green-500 text-white rounded"
-          onClick={() => loginWithRedirect({
-            authorizationParams: {
-              screen_hint: "signup"
-            }
-          })}
-        >
-          Register
-        </button>
       </div>
     );
   }

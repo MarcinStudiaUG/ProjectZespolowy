@@ -1,9 +1,5 @@
 export type ReactionKey = "LIKE" | "HEART" | "SAD" | "SMILE";
 
-export interface PostContent {
-  [key: string]: unknown;
-}
-
 export interface ReactionData {
   LIKE: number;
   HEART: number;
@@ -14,23 +10,24 @@ export interface ReactionData {
 
 export interface Comment {
   id: string;
-  authorId: string;
-  postId: string;
+  postId?: string;      
+  authorId?: string;
   content: string;
   isDeleted: boolean;
   createdAt: string;
+
 }
 
 export interface Post {
   id: string;
-  authorId: string;
+  authorId?: string;
   communityId: string;
   title: string;
-  content: PostContent;
+  content: Record<string, unknown> | string; 
   isDeleted: boolean;
   createdAt: string;
+  comments: Comment[];
   reactions: ReactionData;
-  comments?: Comment[];
 }
 
 export interface Community {
@@ -45,22 +42,17 @@ export interface Community {
 
 export interface User {
   id: string;
-  name: string;
-  avatarUrl: string | null;
-  communityIds: string[];
-  cars?: string[];
+  externalId?: string;
+  username?: string;
+  email?: string;
+  bio?: string;
+  avatarUrl?: string | null;
+  isActivated?: boolean;
+  isDeleted?: boolean;
+  createdAt?: string;
+  communities?: Community[];
 }
 
-export interface GraphQLResponse {
-  data: {
-    me: User & {
-      externalId?: string;
-      username?: string;
-      email?: string;
-      bio?: string;
-      isActivated?: boolean;
-      communities: Community[];
-      createdAt: string;
-    }
-  };
+export interface MeData {
+  me: User;
 }
