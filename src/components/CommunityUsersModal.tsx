@@ -1,5 +1,4 @@
-import { useState } from "react";
-import React from "react";
+import React, { useState } from "react";
 import { User } from "../types/index";
 import UserProfileModal from "./UserProfileModal";
 
@@ -24,6 +23,7 @@ const CommunityUsersModal: React.FC<CommunityUsersModalProps> = ({
           >
             &times;
           </button>
+
           <h2 className="text-2xl font-bold mb-4 text-center">Users</h2>
           <ul>
             {users.map((user) => (
@@ -34,10 +34,10 @@ const CommunityUsersModal: React.FC<CommunityUsersModalProps> = ({
               >
                 <img
                   src={user.avatarUrl || "/default-avatar.png"}
-                  alt={user.name}
+                  alt={user.username}
                   className="w-10 h-10 rounded-full mr-3"
                 />
-                <span>{user.name}</span>
+                <span>{user.username}</span>
               </li>
             ))}
           </ul>

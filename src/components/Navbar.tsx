@@ -1,12 +1,17 @@
+// src/components/Navbar.tsx
 import React, { useState } from "react";
 import AvatarMenu from "./AvatarMenu";
-import { communities } from "../data/mockData";
+import { Community } from "../types";
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  communities: Community[];
+}
+
+const Navbar: React.FC<NavbarProps> = ({ communities }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="relative bg-brand-cardinal-500 fixed">
+    <nav className="relative bg-brand-cardinal-500 fixed w-full">
       <div className="flex items-center justify-between p-2 px-5 text-white">
         <div className="flex items-center">
           <button
@@ -77,9 +82,7 @@ const Navbar: React.FC = () => {
               &times;
             </button>
 
-            <h2 className="text-2xl text-center font-bold mb-6">
-              Communities
-            </h2>
+            <h2 className="text-2xl text-center font-bold mb-6">Communities</h2>
 
             <ul>
               {communities.map((community) => (
