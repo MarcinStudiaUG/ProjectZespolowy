@@ -10,24 +10,29 @@ export interface ReactionData {
 
 export interface Comment {
   id: string;
-  postId?: string;      
-  authorId?: string;
+  authorId: string;
+  postId: string;
   content: string;
   isDeleted: boolean;
   createdAt: string;
-
 }
 
 export interface Post {
   id: string;
-  authorId?: string;
+  authorId: string;
   communityId: string;
   title: string;
-  content: Record<string, unknown> | string; 
+  content: Record<string, unknown> | string;
   isDeleted: boolean;
   createdAt: string;
   comments: Comment[];
   reactions: ReactionData;
+}
+
+export interface User {
+  id: string;
+  username: string;
+  avatarUrl?: string | null;
 }
 
 export interface Community {
@@ -38,21 +43,20 @@ export interface Community {
   isDeleted: boolean;
   createdAt: string;
   posts: Post[];
-}
-
-export interface User {
-  id: string;
-  externalId?: string;
-  username?: string;
-  email?: string;
-  bio?: string;
-  avatarUrl?: string | null;
-  isActivated?: boolean;
-  isDeleted?: boolean;
-  createdAt?: string;
-  communities?: Community[];
+  users: User[];
 }
 
 export interface MeData {
-  me: User;
+  me: {
+    id: string;
+    externalId: string;
+    username: string;
+    email: string;
+    bio: string;
+    createdAt: string;
+    avatarUrl?: string | null;
+    isActivated: boolean;
+    isDeleted: boolean;
+    communities: Community[];
+  };
 }

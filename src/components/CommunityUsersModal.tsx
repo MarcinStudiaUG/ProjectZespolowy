@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User } from "../types/index";
+import { User } from "../types";
 import UserProfileModal from "./UserProfileModal";
 
 interface CommunityUsersModalProps {
@@ -23,7 +23,6 @@ const CommunityUsersModal: React.FC<CommunityUsersModalProps> = ({
           >
             &times;
           </button>
-
           <h2 className="text-2xl font-bold mb-4 text-center">Users</h2>
           <ul>
             {users.map((user) => (
@@ -33,7 +32,7 @@ const CommunityUsersModal: React.FC<CommunityUsersModalProps> = ({
                 onClick={() => setSelectedUser(user)}
               >
                 <img
-                  src={user.avatarUrl || "/default-avatar.png"}
+                  src={"/default-avatar.png"}
                   alt={user.username}
                   className="w-10 h-10 rounded-full mr-3"
                 />
@@ -43,7 +42,6 @@ const CommunityUsersModal: React.FC<CommunityUsersModalProps> = ({
           </ul>
         </div>
       </div>
-
       {selectedUser && (
         <UserProfileModal
           user={selectedUser}

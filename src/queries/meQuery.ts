@@ -19,6 +19,10 @@ export const GET_ME = gql`
         logoUrl
         isDeleted
         createdAt
+        users {
+          id
+          username
+        }
         posts {
           id
           authorId

@@ -1,11 +1,24 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useState } from "react";
 import { Post, ReactionKey, Comment, User } from "../types";
 import CommentForm from "./CommentForm";
 import ReactionBar from "./ReactionBar";
 import UserProfileModal from "./UserProfileModal";
+import { GET_USER } from "../queries/getUserQuery";
+import { useQuery } from "@apollo/client";
 
 interface PostCardProps {
   post: Post;
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapUserName(userId: string, queryResult: any) {
+  for (const community of queryResult.me.communities){
+    for (const user of community.users) {
+        if(user.id === userId) {
+            return user.username
+        }
+     }
+  }
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
@@ -14,7 +27,10 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [reactions, setReactions] = useState(post.reactions);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const authorName = post.authorId || "Unknown Author";
+  const { data, loading, error } = useQuery(GET_USER);
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  const authorName = mapUserName(post.authorId, data) || "Unknown Author";
   const formattedDate = new Date(post.createdAt).toLocaleString();
 
   const handleAddComment = (content: string) => {
@@ -95,11 +111,11 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   <div
                     className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center mr-2 cursor-pointer"
                   >
-                    {(comment.authorId || "U")[0].toUpperCase()}
+                    {( mapUserName(comment.authorId, data ) || "U")[0].toUpperCase()}
                   </div>
                   <div>
                     <span className="font-bold">
-                      {comment.authorId || "Unknown"}:{" "}
+                      {mapUserName(comment.authorId, data ) || "Unknown"}:{" "}
                     </span>
                     <span>{comment.content}</span>
                   </div>
