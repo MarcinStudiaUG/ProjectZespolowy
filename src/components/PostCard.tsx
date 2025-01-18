@@ -6,6 +6,7 @@ import ReactionBar from "./ReactionBar";
 import UserProfileModal from "./UserProfileModal";
 import { GET_USER } from "../queries/getUserQuery";
 import { useQuery } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 
 interface PostCardProps {
   post: Post;
@@ -19,6 +20,7 @@ function mapUserName(userId: string, queryResult: any) {
         }
      }
   }
+  return userId
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
@@ -27,6 +29,14 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [reactions, setReactions] = useState(post.reactions);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
+  const [addComment] =  useMutation(gql`
+      mutation CreateComment($postId: String!,  $input: CreateCommentInput!){
+        createComment(postId: $postId, data: $input) {
+          id
+          authorId
+        }
+      }
+    `)
   const { data, loading, error } = useQuery(GET_USER);
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -34,15 +44,16 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const formattedDate = new Date(post.createdAt).toLocaleString();
 
   const handleAddComment = (content: string) => {
-    const newComment: Comment = {
-      id: new Date().toISOString(),
+
+    //@ts-ignore
+    const newComment: any= {
       content,
-      createdAt: new Date().toISOString(),
-      isDeleted: false,
-      postId: post.id,
-      authorId: "currentUserId",
     };
-    setComments([...comments, newComment]);
+     const result = addComment({variables: {postId: post.id, input: newComment}})
+      result.then(r => {
+        setComments([...comments, {...newComment, authorId: mapUserName(r.data.createComment.authorId, data), id: r.data.id, createdAt: new Date().toISOString()}])
+    })
+    ;
   };
 
   const handleReaction = (reactionType: ReactionKey) => {
@@ -79,9 +90,8 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
       <h2 className="text-xl font-semibold mb-1">{post.title}</h2>
       <p className="mb-2">
-        {typeof post.content === "object"
-          ? JSON.stringify(post.content)
-          : post.content}
+        {/*@ts-ignore*/}
+        {post.content[Object.keys(post.content)[0]]}
       </p>
 
       <ReactionBar reactions={reactions} onReact={handleReaction} />
