@@ -1,0 +1,12 @@
+[submodule "SpotMasterGateway"]
+	path = SpotMasterGateway
+	url = git@github.com:SzymonFaligowskiUG/SpotMasterGateway.git
+[submodule "SpotMasterDomainService"]
+	path = SpotMasterDomainService
+	url = git@github.com:SzymonFaligowskiUG/SpotMasterDomainService.git
+[submodule "SpotMasterPolicyService"]
+	path = SpotMasterPolicyService
+	url = git@github.com:SzymonFaligowskiUG/SpotMasterPolicyService.git
+[submodule "SpotMasterBlogService"]
+	path = SpotMasterBlogService
+	url = git@github.com:SzymonFaligowskiUG/SpotMasterBlogService.git
