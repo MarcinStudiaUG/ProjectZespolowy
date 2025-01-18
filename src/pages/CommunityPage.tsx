@@ -1,33 +1,35 @@
 import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
-import { communities, users } from "../data/mockData";
+import { GET_COMMUNITIES } from "../queries/getCommunitiesQuery";
+import { MeData, Post } from "../types";
 import PostCard from "../components/PostCard";
 import CommunitySidebar from "../components/CommunitySidebar";
 import Navbar from "../components/Navbar";
 import CommunityUsersModal from "../components/CommunityUsersModal";
 import CreatePostForm from "../components/CreatePostForm";
-import { Post } from "../types/index";
-
-interface RouteParams extends Record<string, string | undefined> {
-  communityId: string;
-}
 
 const CommunityPage: React.FC = () => {
   const { isAuthenticated } = useAuth0();
-  const { communityId } = useParams<RouteParams>();
-  const community = communities.find((c) => c.id === communityId);
+  const { communityId } = useParams<{ communityId: string }>();
 
   const [showUsersModal, setShowUsersModal] = useState(false);
   const [showCreatePostForm, setShowCreatePostForm] = useState(false);
-  const [communityPosts, setCommunityPosts] = useState<Post[]>(
-    community?.posts || []
-  );
+  const [communityPosts, setCommunityPosts] = useState<Post[]>([]);
+
+  const { data, loading, error } = useQuery<MeData>(GET_COMMUNITIES);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  const communities = data?.me?.communities || [];
+  const community = communities.find((c) => c.id === communityId);
 
   if (!isAuthenticated) {
     return (
       <div className="h-screen flex flex-col">
-        <Navbar />
+        <Navbar communities={communities} />
         <div className="flex flex-1 items-center justify-center bg-gray-100">
           <h2 className="text-xl font-semibold">
             Please log in or register to view this community.
@@ -41,9 +43,7 @@ const CommunityPage: React.FC = () => {
     return <div>Community not found</div>;
   }
 
-  const communityUsers = users.filter((user) =>
-    user.communityIds.some((id) => id === community.id)
-  );
+  const communityUsers = community.users || [];
 
   const handleCreatePost = (title: string, content: string) => {
     const newPost: Post = {
@@ -55,20 +55,23 @@ const CommunityPage: React.FC = () => {
       createdAt: new Date().toISOString(),
       communityId: community.id,
       reactions: { LIKE: 0, HEART: 0, SAD: 0, SMILE: 0, myReaction: null },
+      comments: [],
     };
-    setCommunityPosts([newPost, ...communityPosts]);
+    setCommunityPosts((prevPosts) => [newPost, ...prevPosts]);
     setShowCreatePostForm(false);
   };
 
   return (
     <div className="h-screen flex flex-col">
-      <Navbar />
+      <Navbar communities={communities} />
       <div className="flex flex-1">
-        <CommunitySidebar currentCommunityId={community.id} />
+      <CommunitySidebar
+        currentCommunityId={community.id}
+        communities={communities}
+        />
         <div className="flex-1 flex flex-col">
-          <div className="p-4 bg-gray-800 text-white flex flex-row items-center">
-            {/* Community Info */}
-            <div className="w-[30%] flex flex-col items-center">
+          <div className="p-4 bg-gray-800 text-white flex items-center">
+            <div className="w-1/3 flex flex-col items-center">
               {community.logoUrl ? (
                 <img
                   src={community.logoUrl}
@@ -80,37 +83,29 @@ const CommunityPage: React.FC = () => {
                   {community.name.charAt(0)}
                 </div>
               )}
-              <h1
-                className="text-2xl font-bold truncate"
-                title={community.name}
-              >
+              <h1 className="text-2xl font-bold truncate" title={community.name}>
                 {community.name}
               </h1>
             </div>
-            <div className="w-[70%] text-left">
+            <div className="w-2/3 text-left">
               <p className="text-gray-300">{community.description}</p>
             </div>
           </div>
 
-          <div className="p-4 bg-gray-100">
-            <div className="grid grid-cols-3 items-center">
-              <div className="flex justify-center">
-                <button
-                  onClick={() => setShowCreatePostForm(!showCreatePostForm)}
-                  className="px-4 py-2 bg-[#74121D] hover:bg-[#580C1F] text-white rounded"
-                >
-                  Create Post
-                </button>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() => setShowUsersModal(true)}
-                  className="px-4 py-2 bg-[#74121D] hover:bg-[#580C1F] text-white rounded"
-                >
-                  See Users: {communityUsers.length}
-                </button>
-              </div>
-            </div>
+
+          <div className="p-4 bg-gray-100 flex justify-between">
+            <button
+              onClick={() => setShowCreatePostForm(!showCreatePostForm)}
+              className="px-4 py-2 bg-[#74121D] hover:bg-[#580C1F] text-white rounded"
+            >
+              Create Post
+            </button>
+            <button
+              onClick={() => setShowUsersModal(true)}
+              className="px-4 py-2 bg-[#74121D] hover:bg-[#580C1F] text-white rounded"
+            >
+              See Users: {communityUsers.length}
+            </button>
           </div>
 
           {showCreatePostForm && (

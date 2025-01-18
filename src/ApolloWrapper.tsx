@@ -4,7 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useMemo } from 'react';
 
 const publicClient = new ApolloClient({
-  link: new HttpLink({ uri: 'http://localhost:9080/graphql' }),
+  link: new HttpLink({ uri: 'http://localhost:64159/graphql' }),
   cache: new InMemoryCache(),
 });
 //@ts-ignore
@@ -28,7 +28,7 @@ const ApolloWrapper = ({ children }) => {
             });
             return forward(operation);
           },
-          new HttpLink({ uri: 'http://localhost:9080/graphql' })
+          new HttpLink({ uri: 'http://localhost:64159/graphql' })
         ),
         cache: new InMemoryCache(),
       });

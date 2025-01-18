@@ -45,7 +45,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
   const handleAddComment = (content: string) => {
 
-    //@ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const newComment: any= {
       content,
     };
