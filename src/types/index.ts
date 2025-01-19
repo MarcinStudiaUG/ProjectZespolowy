@@ -8,6 +8,21 @@ export interface ReactionData {
   myReaction: ReactionKey | null;
 }
 
+export interface Car {
+  id: string;
+  ownerId?: string; // Optional
+  name: string;
+  description: string;
+  brand: string;
+  model: string;
+  hp: number;
+  milage: number;
+  vin?: string;
+  plate: string;
+  isDeleted: boolean;
+  createdAt: string;
+}
+
 export interface Comment {
   id: string;
   authorId: string;
@@ -33,6 +48,7 @@ export interface User {
   id: string;
   username: string;
   avatarUrl?: string | null;
+  cars?: Car[];
 }
 
 export interface Community {
