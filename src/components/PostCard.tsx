@@ -68,8 +68,9 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const formattedDate = new Date(post.createdAt).toLocaleString();
 
   const handleAddComment = (content: string) => {
-    //@ts-ignore
-    const newComment: any = {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const newComment: any= {
       content,
     };
     const result = addComment({
