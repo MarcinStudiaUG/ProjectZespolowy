@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_COMMUNITIES = gql`
-    query Me {
+query Me {
     me {
         communities {
             id
@@ -29,9 +29,23 @@ export const GET_COMMUNITIES = gql`
                 content
                 isDeleted
                 createdAt
+                reactions {
+                    LIKE
+                    HEART
+                    SAD
+                    SMILE
+                    myReaction
+                }
+                comments {
+                    id
+                    authorId
+                    postId
+                    content
+                    isDeleted
+                    createdAt
+                }
             }
         }
     }
 }
-
 `
