@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import { GET_COMMUNITIES } from "../queries/getCommunitiesQuery";
 import { Community, MeData, Post } from "../types";
@@ -20,16 +20,47 @@ const CommunityPage: React.FC = () => {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [community, setCommunity] = useState<Community>();
 
+  const [createPost] = useMutation(
+    gql`
+      mutation CreatePost($input: CreatePostInput!, $community: String!) {
+        createPost(data: $input, communityId: $community) {
+          id
+          authorId
+          title
+          content
+          
+        }
+      }
+    `,
+    {
+      onCompleted: ({ createPost }) => {
+        console.log(createPost)
+        const newPost: any = {
+          id: createPost.id,
+          authorId: createPost.authorId,
+          title: createPost.title,
+          content: createPost.content,
+          createdAt: new Date().toISOString(),
+          communityId: community!.id,
+          reactions: { LIKE: 0, HEART: 0, SAD: 0, SMILE: 0, myReaction: null },
+          comments: [],
+        };
+        setCommunityPosts((prevPosts) => [newPost, ...prevPosts]);
+        setShowCreatePostForm(false);
+      },
+    },
+  );
+
   const { data, loading, error } = useQuery<MeData>(GET_COMMUNITIES);
   useEffect(() => {
-    if(data) {
-      const communities  = data?.me?.communities || [];
-      const community = communities.find((c) => c.id === communityId)
+    if (data) {
+      const communities = data?.me?.communities || [];
+      const community = communities.find((c) => c.id === communityId);
       setCommunities(communities);
-      setCommunity(community)
-      setCommunityPosts(community!.posts)
+      setCommunity(community);
+      setCommunityPosts(community!.posts);
     }
-  }, [loading])
+  }, [loading]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -54,26 +85,22 @@ const CommunityPage: React.FC = () => {
   const communityUsers = community.users || [];
 
   const handleCreatePost = (title: string, content: string) => {
-    const newPost: Post = {
-      id: new Date().toISOString(),
-      authorId: "currentUserId",
-      title,
-      content: { text: content },
-      isDeleted: false,
-      createdAt: new Date().toISOString(),
-      communityId: community.id,
-      reactions: { LIKE: 0, HEART: 0, SAD: 0, SMILE: 0, myReaction: null },
-      comments: [],
-    };
-    setCommunityPosts((prevPosts) => [newPost, ...prevPosts]);
-    setShowCreatePostForm(false);
+    createPost({
+      variables: {
+        input: { title, content: { text: content } },
+        community: community.id,
+      },
+    });
   };
 
   return (
     <div className="h-screen flex flex-col">
       <Navbar communities={communities} />
       <div className="flex flex-1">
-        <CommunitySidebar currentCommunityId={community.id} communities={communities} />
+        <CommunitySidebar
+          currentCommunityId={community.id}
+          communities={communities}
+        />
         <div className="flex-1 flex flex-col">
           <div className="p-6 bg-gray-800 text-white flex flex-col items-center">
             {community.logoUrl ? (
@@ -92,7 +119,7 @@ const CommunityPage: React.FC = () => {
             </h1>
             <p className="text-center text-gray-300">{community.description}</p>
           </div>
-  
+
           <div className="p-4 bg-gray-100 flex justify-between">
             <button
               onClick={() => setShowCreatePostForm(!showCreatePostForm)}
@@ -107,7 +134,7 @@ const CommunityPage: React.FC = () => {
               See Users: {communityUsers.length}
             </button>
           </div>
-  
+
           {showCreatePostForm && (
             <div className="w-[70%] mx-auto my-4">
               <CreatePostForm
@@ -116,7 +143,7 @@ const CommunityPage: React.FC = () => {
               />
             </div>
           )}
-  
+
           <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
             {communityPosts.map((post) => (
               <PostCard key={post.id} post={post} />
@@ -124,7 +151,7 @@ const CommunityPage: React.FC = () => {
           </div>
         </div>
       </div>
-  
+
       {showUsersModal && (
         <CommunityUsersModal
           users={communityUsers}
@@ -133,6 +160,6 @@ const CommunityPage: React.FC = () => {
       )}
     </div>
   );
-}  
+};
 
 export default CommunityPage;
