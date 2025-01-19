@@ -4,8 +4,10 @@ import { GET_ME } from "../queries/meQuery";
 import Navbar from "../components/Navbar";
 import CommunitySidebar from "../components/CommunitySidebar";
 import { Community, MeData, User } from "../types";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const ProfilePage: React.FC = () => {
+  const { user } = useAuth0();
   const { data, loading, error } = useQuery<MeData>(GET_ME);
   // const [newCar, setNewCar] = useState("");
 
@@ -44,11 +46,11 @@ const ProfilePage: React.FC = () => {
 
         <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
           <div className="bg-white shadow p-4 rounded mb-4 flex items-center space-x-4">
-            <img
-              src={currentUser.avatarUrl || "/default-avatar.png"}
-              alt={currentUser.username}
-              className="w-16 h-16 rounded-full"
-            />
+          <img
+        src={user?.picture || "/default-avatar.png"}
+        alt={user?.name}
+        className="w-16 h-16 rounded-full cursor-pointer"
+      />
             <h1 className="text-2xl font-bold">{currentUser.username}'s Profile</h1>
           </div>
 
